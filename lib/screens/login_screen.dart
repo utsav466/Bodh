@@ -61,7 +61,7 @@ class LoginScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // Email
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: TextField(
