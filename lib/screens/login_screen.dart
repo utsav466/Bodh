@@ -154,15 +154,15 @@ class LoginScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            GestureDetector(
-              onTap: () {},
-              child: const Text(
-                "Forgot Password",
-                style: TextStyle(
-                  color: Color(0xFF3D8BFF),
-                ),
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () {},
+            //   child: const Text(
+            //     "Forgot Password",
+            //     style: TextStyle(
+            //       color: Color(0xFF3D8BFF),
+            //     ),
+            //   ),
+            // ),
 
             const SizedBox(height: 30),
           ],
