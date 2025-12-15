@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 
 
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class BottomNavigationScreen extends StatefulWidget {
+  const BottomNavigationScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<BottomNavigationScreen> createState() => _BottomNavigationScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   int _selectedIndex = 0;
 
   List<Widget> lstBottomScreen = [
@@ -42,7 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             label: 'Cart',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
+          BottomNavigationBarItem(icon: Icon(Icons.car_crash), label: 'About'),
         ],
         backgroundColor: Colors.blue,
         selectedItemColor: Colors.white,
