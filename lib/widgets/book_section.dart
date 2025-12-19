@@ -27,7 +27,7 @@ class BookSection extends StatelessWidget {
         SectionHeader(title: title),
         const SizedBox(height: 16),
 
-        /// FIX: Added safe vertical buffer for text rendering
+        
         SizedBox(
           height: isLargeCard
               ? (isTablet ? 360 : 270) // was 260 → overflow fixed
