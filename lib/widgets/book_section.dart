@@ -30,7 +30,7 @@ class BookSection extends StatelessWidget {
         
         SizedBox(
           height: isLargeCard
-              ? (isTablet ? 360 : 270) // was 260 → overflow fixed
+              ? (isTablet ? 360 : 270)
               : (isTablet ? 260 : 200),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
