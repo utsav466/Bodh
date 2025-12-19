@@ -1,8 +1,9 @@
 import 'package:bodh_flutter/screens/bottom%20screen/about.dart';
-import 'package:bodh_flutter/screens/bottom%20screen/cart.dart';
+import 'package:bodh_flutter/screens/bottom%20screen/cart_screen.dart';
 import 'package:bodh_flutter/screens/bottom%20screen/home.dart';
 import 'package:bodh_flutter/screens/bottom%20screen/profile.dart';
 import 'package:flutter/material.dart';
+
 
 
 
@@ -26,10 +27,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('This is dashboard'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      // appBar: AppBar(
+      //   // title: const Text('This is dashboard'),
+      //   // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      // ),
 
       body: lstBottomScreen[_selectedIndex], // <-- Shows the correct page
 
@@ -41,11 +42,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: Icon(Icons.shopping_bag),
             label: 'Cart',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
-        backgroundColor: Colors.blue,
-        selectedItemColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        selectedItemColor: Color(0xFF3D8BFF),
         unselectedItemColor: Colors.black,
         currentIndex: _selectedIndex,
         onTap: (index) {
