@@ -88,7 +88,7 @@ class BuyNowScreen extends StatelessWidget {
             ),
             const Spacer(),
 
-            // Next button
+            
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
