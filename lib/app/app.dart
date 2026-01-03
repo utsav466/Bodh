@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 import '../features/splash/presentation/pages/splash_screen.dart';
 import '../features/onboarding/presentation/pages/onboarding_screen.dart';
 import '../features/auth/presentation/pages/login_page.dart';
-import '../screens/dashboard_screen.dart';
+import '../features/dashboard/presentation/dashboard_screen.dart';
 
 class BodhApp extends StatelessWidget {
   const BodhApp({super.key});

@@ -13,7 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
-  @override
+  @override  
   ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
@@ -45,29 +45,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
 
 
-  // final cities = [
-  //   'Kathmandu',
-  //   'Pokhara',
-  //   'Lalitpur',
-  //   'Biratnagar',
-  //   'Butwal',
-  // ];
-
-// demo data from GET/api/v1/batches 
-// List<BatchEntity> _batches =[];
-
-
-
-  // void signUp() {
-  //   if (_formKey.currentState!.validate()) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text("Sign Up Successful"),
-  //         backgroundColor: Colors.green,
-  //       ),
-  //     );
-  //   }
-  // }
 
   Future<void> handleSignup() async{
     if(_formKey.currentState!.validate()){
@@ -112,10 +89,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     //auth state 
     final authState = ref.watch(authViewModelProvider);
 
-
-    // listen for auth state changes
-    //ref.read
-    //ref.watch
 
     ref.listen<AuthState>(authViewModelProvider,(previous, next){ 
       if(next.status == AuthStatus.error){

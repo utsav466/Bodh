@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/models/book.dart';
+import 'package:bodh_flutter/features/dashboard/models/book.dart';
 
 class BuyNowScreen extends StatelessWidget {
   final Book book;
@@ -93,7 +93,7 @@ class BuyNowScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Proceed to payment or confirmation
+                  // Proceed to payment or 
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,

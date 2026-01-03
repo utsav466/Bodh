@@ -1,6 +1,6 @@
-import 'package:bodh_flutter/screens/checkout_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/checkout_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/models/cart.dart';
+import 'package:bodh_flutter/features/dashboard/models/cart.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});

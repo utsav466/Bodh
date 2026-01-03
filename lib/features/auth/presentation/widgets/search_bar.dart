@@ -1,4 +1,4 @@
-import 'package:bodh_flutter/screens/utils/responsive.dart';
+import 'package:bodh_flutter/core/utils/responsive.dart';
 import 'package:flutter/material.dart';
 // import '../utils/responsive.dart';
 

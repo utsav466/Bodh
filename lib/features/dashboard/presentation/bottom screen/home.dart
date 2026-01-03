@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/models/book.dart';
+import 'package:bodh_flutter/features/dashboard/models/book.dart';
 import 'package:bodh_flutter/features/auth/presentation/widgets/search_bar.dart' as custom_search;
 import 'package:bodh_flutter/features/auth/presentation/widgets/book_section.dart';
 

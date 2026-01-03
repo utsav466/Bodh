@@ -1,6 +1,6 @@
-import 'package:bodh_flutter/screens/payment_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/payment_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/models/cart.dart';
+import 'package:bodh_flutter/features/dashboard/models/cart.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});

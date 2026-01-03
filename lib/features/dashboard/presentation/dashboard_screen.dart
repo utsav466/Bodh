@@ -1,7 +1,7 @@
-import 'package:bodh_flutter/screens/bottom%20screen/about.dart';
-import 'package:bodh_flutter/screens/bottom%20screen/cart_screen.dart';
-import 'package:bodh_flutter/screens/bottom%20screen/home.dart';
-import 'package:bodh_flutter/screens/bottom%20screen/profile.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/about.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/cart_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/home.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/profile.dart';
 import 'package:flutter/material.dart';
 
 

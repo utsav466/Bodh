@@ -1,7 +1,7 @@
-import 'package:bodh_flutter/screens/book_details_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/book_details_screen.dart';
 import 'package:bodh_flutter/core/utils/responsive.dart';
 import 'package:flutter/material.dart';
-import '../../../../models/book.dart';
+import '../../../dashboard/models/book.dart';
 // import '../utils/responsive.dart';
 
 class PopularBookCard extends StatelessWidget {

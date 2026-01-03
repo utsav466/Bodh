@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/models/book.dart';
+import 'package:bodh_flutter/features/dashboard/models/book.dart';
 
 class ReadOnlineScreen extends StatelessWidget {
   final Book book;
