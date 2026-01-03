@@ -75,7 +75,7 @@ class BuyNowScreen extends StatelessWidget {
             const SizedBox(height: 6),
             GestureDetector(
               onTap: () {
-                // Handle return policy link
+           
               },
               child: const Text(
                 '7-day return on undamaged items',
