@@ -93,7 +93,7 @@ class BuyNowScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Proceed to payment or 
+                  
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
