@@ -3,7 +3,7 @@ import 'package:bodh_flutter/core/utils/snack_bar_utils.dart';
 import 'package:bodh_flutter/features/auth/presentation/pages/signup_page.dart';
 import 'package:bodh_flutter/features/auth/presentation/state/auth_state.dart';
 import 'package:bodh_flutter/features/auth/presentation/view_model/auth_view_model.dart';
-import 'package:bodh_flutter/screens/dashboard_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

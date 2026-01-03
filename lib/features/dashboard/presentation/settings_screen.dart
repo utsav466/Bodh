@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/features/dashboard/change_password_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/change_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

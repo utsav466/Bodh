@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bodh_flutter/models/cart.dart';
+import 'package:bodh_flutter/features/dashboard/models/cart.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});

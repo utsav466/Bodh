@@ -1,8 +1,8 @@
-import 'package:bodh_flutter/screens/edit_profile.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/edit_profile.dart';
 import 'package:bodh_flutter/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
-import 'package:bodh_flutter/screens/settings_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

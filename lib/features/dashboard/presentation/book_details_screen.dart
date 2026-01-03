@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:bodh_flutter/features/dashboard/models/book.dart';
-import 'package:bodh_flutter/features/dashboard/bottom%20screen/cart_screen.dart';
-import 'package:bodh_flutter/features/dashboard/read_online.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/cart_screen.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/read_online.dart';
 
-import 'models/cart.dart';
+import '../models/cart.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   final Book book;

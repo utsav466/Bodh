@@ -1,6 +1,6 @@
 import 'package:bodh_flutter/core/utils/responsive.dart';
 import 'package:flutter/material.dart';
-import '../../../../models/book.dart';
+import '../../../dashboard/models/book.dart';
 import 'book_card.dart';
 import 'popular_book_card.dart';
 import 'section_header.dart';
