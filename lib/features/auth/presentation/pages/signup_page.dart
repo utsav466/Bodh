@@ -337,15 +337,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   
 //   // final bool _isLoading=false;
 
-//   String selectedCountryCode = '+977';
-//   String? selectedCity;
-
-//   final countryCodes = [
-//     {'code': '+977', 'name': 'Nepal', 'flag': '🇳🇵'},
-//     {'code': '+91', 'name': 'India', 'flag': '🇮🇳'},
-//     {'code': '+1', 'name': 'USA', 'flag': '🇺🇸'},
-//     {'code': '+44', 'name': 'UK', 'flag': '🇬🇧'},
-//   ];
 
 
 
