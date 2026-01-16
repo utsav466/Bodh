@@ -74,7 +74,7 @@ class AuthViewModel extends Notifier<AuthState> {
         state = state.copyWith(
           status: AuthStatus.authenticated,
           authEntity: authEntity,
-          successMessage: "Login successful", // ✅ success message
+          successMessage: "Login successful",
         );
       },
     );
