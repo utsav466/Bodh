@@ -332,11 +332,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 // class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 //   final _formKey = GlobalKey<FormState>();
 
-//   final nameController = TextEditingController();
-//   final phoneController = TextEditingController();
-//   final emailController = TextEditingController();
-//   final passController = TextEditingController();
-//   final confirmPassController = TextEditingController();
+
 
   
 //   // final bool _isLoading=false;
