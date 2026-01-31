@@ -20,16 +20,15 @@ class ApiClient {
         connectTimeout: ApiEndpoints.connectionTimeout,
         receiveTimeout: ApiEndpoints.receiveTimeout,
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       ),
     );
 
-    // Add auth interceptor
+    // ✅ Auth interceptor (JWT)
     _dio.interceptors.add(_AuthInterceptor());
 
-    // Auto retry on network failures
+    // ✅ Retry on network failures
     _dio.interceptors.add(
       RetryInterceptor(
         dio: _dio,
@@ -48,7 +47,7 @@ class ApiClient {
       ),
     );
 
-    // Add logger in debug mode
+    // ✅ Logger (debug only)
     if (kDebugMode) {
       _dio.interceptors.add(
         PrettyDioLogger(
@@ -65,25 +64,33 @@ class ApiClient {
 
   Dio get dio => _dio;
 
+  // ======================
+  // JSON REQUESTS
+  // ======================
+
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
-    Options? option,
-  }) async {
-    return _dio.get(path, queryParameters: queryParameters, options: option);
+    Options? options,
+  }) {
+    return _dio.get(
+      path,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 
   Future<Response> post(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? option,
-  }) async {
+    Options? options,
+  }) {
     return _dio.post(
       path,
       data: data,
       queryParameters: queryParameters,
-      options: option,
+      options: options,
     );
   }
 
@@ -91,13 +98,13 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? option,
-  }) async {
+    Options? options,
+  }) {
     return _dio.put(
       path,
       data: data,
       queryParameters: queryParameters,
-      options: option,
+      options: options,
     );
   }
 
@@ -105,32 +112,51 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? option,
-  }) async {
+    Options? options,
+  }) {
     return _dio.delete(
       path,
       data: data,
       queryParameters: queryParameters,
-      options: option,
+      options: options,
     );
   }
 
-  Future<Response> uploadFile(
-    String path, {
-    required FormData formData,
-    Options? options,
-    ProgressCallback? onSendProgress,
-  }) async {
-    return _dio.post(
-      path,
-      data: formData,
-      options: options,
-      onSendProgress: onSendProgress,
-    );
-  }
+  // ======================
+  // FILE UPLOAD (IMPORTANT)
+  // ======================
+
+Future<Response> uploadFile(
+  String path, {
+  required FormData formData,
+  String method = "POST",
+  ProgressCallback? onSendProgress,
+}) async {
+  const storage = FlutterSecureStorage();
+  final token = await storage.read(key: "auth_token");
+
+  return _dio.request(
+    path,
+    data: formData,
+    options: Options(
+      method: method,
+      contentType: 'multipart/form-data',
+      headers: token != null
+          ? {
+              "Authorization": "Bearer $token",
+            }
+          : null,
+    ),
+    onSendProgress: onSendProgress,
+  );
 }
 
-// Auth interceptor to add JWT token to request
+}
+
+// ======================
+// AUTH INTERCEPTOR
+// ======================
+
 class _AuthInterceptor extends Interceptor {
   final _storage = const FlutterSecureStorage();
   static const String _tokenKey = "auth_token";
@@ -140,23 +166,14 @@ class _AuthInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // Public endpoints (no auth required)
-    final publicEndPoints = [
-      ApiEndpoints.login,     // ✅ only login
-      ApiEndpoints.register,  // ✅ only register
-    ];
+    final publicEndpoints = {
+      ApiEndpoints.login,
+      ApiEndpoints.register,
+    };
 
-    final isPublicGet =
-        options.method == "GET" &&
-        publicEndPoints.any((endpoint) => options.path.startsWith(endpoint));
-
-    final isAuthEndpoint =
-        options.path == ApiEndpoints.login ||
-        options.path == ApiEndpoints.register;
-
-    if (!isPublicGet && !isAuthEndpoint) {
+    if (!publicEndpoints.contains(options.path)) {
       final token = await _storage.read(key: _tokenKey);
-      if (token != null) {
+      if (token != null && token.isNotEmpty) {
         options.headers["Authorization"] = "Bearer $token";
       }
     }
@@ -168,7 +185,6 @@ class _AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (err.response?.statusCode == 401) {
       _storage.delete(key: _tokenKey);
-      // Optionally trigger logout navigation here
     }
     handler.next(err);
   }

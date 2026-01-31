@@ -10,6 +10,8 @@ class AuthEntity extends Equatable {
   final String username;
   final String? password;
   final BatchEntity? batch;
+
+  // ✅ keep this name (used by Hive + local datasource)
   final String? profilePicture;
 
   const AuthEntity({
@@ -23,17 +25,17 @@ class AuthEntity extends Equatable {
     this.batch,
     this.profilePicture,
   });
+
   @override
-  // TODO: implement props
   List<Object?> get props => [
-    authId,
-    fullName,
-    email,
-    phoneNumber,
-    batchId,
-    username,
-    password,
-    batch,
-    profilePicture,
-  ];
+        authId,
+        fullName,
+        email,
+        phoneNumber,
+        batchId,
+        username,
+        password,
+        batch,
+        profilePicture,
+      ];
 }

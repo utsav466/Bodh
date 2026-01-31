@@ -1,103 +1,117 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Shared prefs provider
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError("Shared pref initialized");
-  // async
-  // sync
+  throw UnimplementedError(
+    'SharedPreferences must be initialized in main.dart',
+  );
 });
 
-// provider
 final userSessionServiceProvider = Provider<UserSessionService>((ref) {
   return UserSessionService(prefs: ref.read(sharedPreferencesProvider));
-}); // Provider
+});
 
 class UserSessionService {
   final SharedPreferences _prefs;
 
   UserSessionService({required SharedPreferences prefs}) : _prefs = prefs;
-  //UserSessionService(this._prefs);
-  // Keys for storing data
-  
-  static const String _keysIsLoggedIn = 'is_logged_in';
+
+  static const String _keyIsLoggedIn = 'is_logged_in';
   static const String _keyUserId = 'user_id';
-  static const String _keyUserEmail = 'user_email';
+  static const String _keyEmail = 'user_email';
   static const String _keyUsername = 'username';
-  static const String _keyUserFullName = 'user_full_name';
-  static const String _keyUserPhoneNumber = 'user_phone_number';
-  static const String _keyUserBacthId = 'user_batch_id';
+  static const String _keyFullName = 'user_full_name';
+  static const String _keyPhoneNumber = 'user_phone_number';
+
+  // ✅ store image url/path here
   static const String _keyUserProfileImage = 'user_profile_image';
 
-  // Store user session data
   Future<void> saveUserSession({
     required String userId,
     required String email,
     required String username,
     required String fullName,
-    required String? phoneNumber,
-    // required String? batchId,
+    String? phoneNumber,
+
+    // ✅ support both names
     String? profilePicture,
+    String? avatarUrl,
   }) async {
-    await _prefs.setBool(_keysIsLoggedIn, true);
+    await _prefs.setBool(_keyIsLoggedIn, true);
     await _prefs.setString(_keyUserId, userId);
-    await _prefs.setString(_keyUserEmail, email);
+    await _prefs.setString(_keyEmail, email);
     await _prefs.setString(_keyUsername, username);
-    await _prefs.setString(_keyUserFullName, fullName);
+    await _prefs.setString(_keyFullName, fullName);
+
     if (phoneNumber != null) {
-      await _prefs.setString(_keyUserPhoneNumber, phoneNumber);
+      await _prefs.setString(_keyPhoneNumber, phoneNumber);
     }
-    // if (batchId != null) {
-    //   await _prefs.setString(_keyUserBacthId, batchId);
-    // }
-    // if (profilePicture != null) {
-    //   await _prefs.setString(_keyUserProfileImage, profilePicture);
-    // }
+
+    // ✅ prefer avatarUrl if provided, otherwise profilePicture
+    final imageValue = avatarUrl ?? profilePicture;
+    if (imageValue != null && imageValue.isNotEmpty) {
+      await _prefs.setString(_keyUserProfileImage, imageValue);
+    }
   }
-  // Clear user session data
 
   Future<void> clearUserSession() async {
-    
-    await _prefs.remove(_keyUserBacthId);
-    await _prefs.remove(_keyUserPhoneNumber);
-    await _prefs.remove(_keyUserFullName);
-    await _prefs.remove(_keyUsername);
-    await _prefs.remove(_keyUserEmail);
     await _prefs.remove(_keyUserId);
-    await _prefs.remove(_keysIsLoggedIn);
+    await _prefs.remove(_keyEmail);
+    await _prefs.remove(_keyUsername);
+    await _prefs.remove(_keyFullName);
+    await _prefs.remove(_keyPhoneNumber);
     await _prefs.remove(_keyUserProfileImage);
+    await _prefs.remove(_keyIsLoggedIn);
   }
 
-  bool isLoggedIn() {
-    return _prefs.getBool(_keysIsLoggedIn) ?? false; 
-  }
+  bool isLoggedIn() => _prefs.getBool(_keyIsLoggedIn) ?? false;
 
-  String? getUserId() {
-    return _prefs.getString(_keyUserId);
-  }
+  String? getUserId() => _prefs.getString(_keyUserId);
+  String? getEmail() => _prefs.getString(_keyEmail);
+  String? getUsername() => _prefs.getString(_keyUsername);
+  String? getFullName() => _prefs.getString(_keyFullName);
+  String? getPhoneNumber() => _prefs.getString(_keyPhoneNumber);
 
-  String? getUserEmail() {
-    return _prefs.getString(_keyUserEmail);
-  }
+  // ✅ old getter name (used by existing code)
+  String? getUserProfileImage() => _prefs.getString(_keyUserProfileImage);
 
-  String? getUsername() {
-    return _prefs.getString(_keyUsername);
-  }
+  // ✅ new getter name (used by new code)
+  String? getAvatarUrl() => _prefs.getString(_keyUserProfileImage);
 
-  String? getUserFullName() {
-    return _prefs.getString(_keyUserFullName);
-  }
+  Future<UserSession?> getUserSession() async {
+    final userId = getUserId();
+    if (userId == null || userId.isEmpty) return null;
 
-  String? getUserPhoneNumber() {
-    return _prefs.getString(_keyUserFullName);
+    return UserSession(
+      userId: userId,
+      email: getEmail() ?? '',
+      username: getUsername() ?? '',
+      fullName: getFullName() ?? '',
+      phoneNumber: getPhoneNumber(),
+      avatarUrl: getAvatarUrl(),
+      profilePicture: getUserProfileImage(),
+    );
   }
+}
 
-  String? getUserBatchId() {
-    return _prefs.getString(_keyUserBacthId);
-  }
+class UserSession {
+  final String userId;
+  final String email;
+  final String username;
+  final String fullName;
+  final String? phoneNumber;
 
-  String? getUserProfileImage() {
-    return _prefs.getString(_keyUserProfileImage);
-  }
+  // ✅ expose both
+  final String? avatarUrl;
+  final String? profilePicture;
 
+  const UserSession({
+    required this.userId,
+    required this.email,
+    required this.username,
+    required this.fullName,
+    this.phoneNumber,
+    this.avatarUrl,
+    this.profilePicture,
+  });
 }
