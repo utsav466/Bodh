@@ -63,7 +63,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        // Navigate to dashboard only on successful login
+    
         AppRoutes.pushReplacement(context, DashboardScreen());
       } else if (next.status == AuthStatus.error && next.errorMessage != null) {
         // Show error message
