@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bodh_flutter/core/error/failures.dart';
 import 'package:bodh_flutter/core/services/connectivity/network_info.dart';
 import 'package:bodh_flutter/features/auth/data/datasources/auth_datasource.dart';
@@ -10,22 +12,13 @@ import 'package:bodh_flutter/features/auth/domain/repositories/auth_repository.d
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:lost_n_found/core/error/failures.dart';
-// import 'package:lost_n_found/core/services/connectivity/network_info.dart';
-// import 'package:lost_n_found/features/auth/data/datasources/auth_datasource.dart';
-// import 'package:lost_n_found/features/auth/data/datasources/local/auth_local_datasource.dart';
-// import 'package:lost_n_found/features/auth/data/datasources/remote/auth_remote_datasource.dart';
-// import 'package:lost_n_found/features/auth/data/models/auth_api_model.dart';
-// import 'package:lost_n_found/features/auth/data/models/auth_hive_model.dart';
-// import 'package:lost_n_found/features/auth/domain/entities/auth_entity.dart';
-// import 'package:lost_n_found/features/auth/domain/repositories/auth_repository.dart';
-// import 'package:lost_n_found/core/services/connectivity/network_info.dart';
 
-//provide
+// Provider
 final authRepositoryProvider = Provider<IAuthRepository>((ref) {
   final authLocalDatasource = ref.watch(authLocalDatasourceProvider);
   final authRemoteDatasource = ref.watch(authRemoteDatasourceProvider);
   final networkInfo = ref.watch(networkInfoProvider);
+
   return AuthRepository(
     authDatasource: authLocalDatasource,
     authRemoteDatasource: authRemoteDatasource,
@@ -42,17 +35,16 @@ class AuthRepository implements IAuthRepository {
     required IAuthLocalDatasource authDatasource,
     required IAuthRemoteDatasource authRemoteDatasource,
     required NetworkInfo networkInfo,
-  }) : _authLocalDatasource = authDatasource,
-       _networkInfo = networkInfo,
-       _authRemoteDatasource = authRemoteDatasource;
+  })  : _authLocalDatasource = authDatasource,
+        _authRemoteDatasource = authRemoteDatasource,
+        _networkInfo = networkInfo;
 
   @override
   Future<Either<Failure, AuthEntity>> getCurrentUser() async {
     try {
       final model = await _authLocalDatasource.getCurrentUser();
       if (model != null) {
-        final entity = model.toEntity();
-        return Right(entity);
+        return Right(model.toEntity());
       }
       return Left(LocalDatabaseFailure(message: "Failed to get current user"));
     } catch (e) {
@@ -69,8 +61,7 @@ class AuthRepository implements IAuthRepository {
       try {
         final result = await _authRemoteDatasource.login(email, password);
         if (result != null) {
-          final entity = result.toEntity();
-          return Right(entity);
+          return Right(result.toEntity());
         }
         return Left(ApiFailure(message: "Invalid credentials"));
       } on DioException catch (e) {
@@ -87,10 +78,8 @@ class AuthRepository implements IAuthRepository {
       try {
         final model = await _authLocalDatasource.login(email, password);
         if (model != null) {
-          final entity = model.toEntity();
-          return Right(entity);
+          return Right(model.toEntity());
         }
-
         return Left(LocalDatabaseFailure(message: "User not found"));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
@@ -128,21 +117,54 @@ class AuthRepository implements IAuthRepository {
       }
     } else {
       try {
-        // Check if email already exists
-        final existingUser = await _authLocalDatasource.getUserByEmail(
-          entity.email,
-        );
+        final existingUser =
+            await _authLocalDatasource.getUserByEmail(entity.email);
         if (existingUser != null) {
           return const Left(
             LocalDatabaseFailure(message: "Email already registered"),
           );
         }
+
         final model = AuthHiveModel.fromEntity(entity);
         await _authLocalDatasource.register(model);
         return Right(true);
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
       }
+    }
+  }
+
+  // ✅ ONLY NEW METHOD (avatar upload)
+  @override
+  Future<Either<Failure, AuthEntity>> updateAvatar(File image) async {
+    if (!await _networkInfo.isConnected) {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+
+    try {
+      final result = await _authRemoteDatasource.updateAvatar(image);
+
+      if (result != null) {
+        final entity = result.toEntity();
+
+        // Update local Hive cache
+        await _authLocalDatasource.updateUser(
+          AuthHiveModel.fromEntity(entity),
+        );
+
+        return Right(entity);
+      }
+
+      return const Left(ApiFailure(message: "Avatar update failed"));
+    } on DioException catch (e) {
+      return Left(
+        ApiFailure(
+          statusCode: e.response?.statusCode,
+          message: e.response?.data["message"] ?? "Avatar upload failed",
+        ),
+      );
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
     }
   }
 }

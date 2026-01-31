@@ -3,7 +3,6 @@ import 'package:bodh_flutter/features/auth/presentation/pages/login_page.dart';
 import 'package:bodh_flutter/features/auth/presentation/state/auth_state.dart';
 import 'package:bodh_flutter/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:bodh_flutter/features/auth/presentation/widgets/gradient_widget.dart';
-import 'package:bodh_flutter/features/batch/presentation/view_model/batch_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,7 +23,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final confirmPassController = TextEditingController();
 
   String selectedCountryCode = '+977';
-  String? selectedCity;
 
   final countryCodes = [
     {'code': '+977', 'name': 'Nepal', 'flag': '🇳🇵'},
@@ -46,16 +44,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      ref.read(batchViewmodelProvider.notifier).getAllBatches();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final batchState = ref.watch(batchViewmodelProvider);
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
@@ -67,7 +56,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       } else if (next.status == AuthStatus.registered) {
         SnackbarUtils.showSuccess(
           context,
-          next.successMessage ?? 'User registered successfully', // ✅ fixed
+          next.successMessage ?? 'User registered successfully',
         );
         Navigator.pushReplacement(
           context,
@@ -146,6 +135,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                 SizedBox(
                                   width: 120,
                                   child: DropdownButtonFormField<String>(
+                                    isExpanded: true, // ✅ REQUIRED
                                     initialValue: selectedCountryCode,
                                     decoration: const InputDecoration(
                                       labelText: "Code",
@@ -155,17 +145,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                         value: country['code'],
                                         child: Row(
                                           children: [
-                                            Text(
-                                              country['flag']!,
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                              ),
-                                            ),
+                                            Text(country['flag']!),
                                             const SizedBox(width: 6),
-                                            Text(
-                                              country['code']!,
-                                              style: const TextStyle(
-                                                fontSize: 14,
+                                            Flexible(
+                                              child: Text(
+                                                country['code']!,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ],
@@ -216,33 +201,31 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                   : null,
                             ),
                             const SizedBox(height: 10),
+
                             GradientButton(
                               text: 'Signup',
                               onPressed: handleSignup,
-                              isLoading: authState.status == AuthStatus.loading,
+                              isLoading:
+                                  authState.status == AuthStatus.loading,
                             ),
                             const SizedBox(height: 25),
 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
-                                  "Already have an account?",
-                                  style: TextStyle(fontSize: 15),
-                                ),
+                                const Text("Already have an account?"),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const LoginPage(),
+                                        builder: (_) => const LoginPage(),
                                       ),
                                     );
                                   },
                                   child: const Text(
                                     " Login",
                                     style: TextStyle(
-                                      fontSize: 15,
                                       color: Colors.blue,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -277,31 +260,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 18,
-        ),
-        enabledBorder: OutlineInputBorder(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(35),
-          borderSide: const BorderSide(color: Colors.lightBlueAccent),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(35),
-          borderSide: const BorderSide(color: Colors.blue),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(35),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(35),
-          borderSide: const BorderSide(color: Colors.red),
         ),
       ),
     );
   }
 }
-
-
-

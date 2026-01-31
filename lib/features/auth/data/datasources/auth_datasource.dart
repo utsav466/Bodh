@@ -1,5 +1,4 @@
-// import 'package:lost_n_found/features/auth/data/models/auth_api_model.dart';
-// import 'package:lost_n_found/features/auth/data/models/auth_hive_model.dart';
+import 'dart:io';
 
 import 'package:bodh_flutter/features/auth/data/models/auth_api_model.dart';
 import 'package:bodh_flutter/features/auth/data/models/auth_hive_model.dart';
@@ -19,4 +18,7 @@ abstract interface class IAuthRemoteDatasource {
   Future<AuthApiModel> register(AuthApiModel user);
   Future<AuthApiModel?> login(String email, String password);
   Future<AuthApiModel?> getUserById(String authId);
+
+  // ✅ STEP 1: ONLY THIS LINE IS NEW
+  Future<AuthApiModel?> updateAvatar(File image);
 }

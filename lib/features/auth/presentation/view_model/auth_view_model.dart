@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:bodh_flutter/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bodh_flutter/features/auth/domain/usecases/register_usecase.dart';
+import 'package:bodh_flutter/features/auth/domain/usecases/update_avatar_usecase.dart';
 import 'package:bodh_flutter/features/auth/presentation/state/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,11 +13,13 @@ final authViewModelProvider =
 class AuthViewModel extends Notifier<AuthState> {
   late final RegisterUsecase _registerUsecase;
   late final LoginUsecase _loginUsecase;
+  late final UpdateAvatarUsecase _updateAvatarUsecase;
 
   @override
   AuthState build() {
     _registerUsecase = ref.read(registerUsecaseProvider);
     _loginUsecase = ref.read(loginUsecaseProvider);
+    _updateAvatarUsecase = ref.read(updateAvatarUsecaseProvider);
     return const AuthState();
   }
 
@@ -25,8 +30,11 @@ class AuthViewModel extends Notifier<AuthState> {
     required String username,
     required String password,
   }) async {
-    state = state.copyWith(status: AuthStatus.loading);
-    await Future.delayed(const Duration(seconds: 2));
+    state = state.copyWith(
+      status: AuthStatus.loading,
+      errorMessage: null,
+      successMessage: null,
+    );
 
     final params = RegisterUsecaseParams(
       fullName: fullName,
@@ -44,10 +52,10 @@ class AuthViewModel extends Notifier<AuthState> {
           errorMessage: failure.message,
         );
       },
-      (isRegistered) {
+      (_) {
         state = state.copyWith(
           status: AuthStatus.registered,
-          successMessage: "User registered successfully", // ✅ success message
+          successMessage: "User registered successfully",
         );
       },
     );
@@ -57,8 +65,11 @@ class AuthViewModel extends Notifier<AuthState> {
     required String email,
     required String password,
   }) async {
-    state = state.copyWith(status: AuthStatus.loading);
-    await Future.delayed(const Duration(seconds: 2));
+    state = state.copyWith(
+      status: AuthStatus.loading,
+      errorMessage: null,
+      successMessage: null,
+    );
 
     final params = LoginUsecaseParams(email: email, password: password);
     final result = await _loginUsecase(params);
@@ -79,4 +90,42 @@ class AuthViewModel extends Notifier<AuthState> {
       },
     );
   }
+
+Future<void> updateAvatar(File image) async {
+  state = state.copyWith(
+    status: AuthStatus.loading,
+    errorMessage: null,
+    successMessage: null,
+  );
+
+  try {
+    final result = await _updateAvatarUsecase(image);
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: failure.message, // should be human readable
+          successMessage: null,
+        );
+      },
+      (updatedAuth) {
+        state = state.copyWith(
+          status: AuthStatus.authenticated,
+          authEntity: updatedAuth,
+          successMessage: "Profile picture updated successfully",
+          errorMessage: null,
+        );
+      },
+    );
+  } catch (_) {
+    // ✅ Prevent "UnimplementedError" or raw exceptions from showing
+    state = state.copyWith(
+      status: AuthStatus.error,
+      errorMessage: "Failed to update profile picture",
+      successMessage: null,
+    );
+  }
+}
+
 }
