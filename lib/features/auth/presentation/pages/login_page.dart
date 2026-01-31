@@ -66,7 +66,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     
         AppRoutes.pushReplacement(context, DashboardScreen());
       } else if (next.status == AuthStatus.error && next.errorMessage != null) {
-        // Show error message
+        
         SnackbarUtils.showError(context, next.errorMessage!);
       }
     });
