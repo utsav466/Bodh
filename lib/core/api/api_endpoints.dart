@@ -21,9 +21,19 @@ class ApiEndpoints {
 
   static const String register = "/api/auth/register";
   static const String login = "/api/auth/login";
+  static const String forgotPassword = "/api/auth/forgot-password";
+  static const String resetPassword = "/api/auth/reset-password";
 
   static const String users = "/api/users";
-
-  // ✅ NEW
   static const String updateMyAvatar = "/api/users/me/avatar";
+
+  static const String books = "/api/books";
+
+  static const String createOrder = "/api/orders";
+  static const String myOrders = "/api/orders/me";
+  static String orderDetail(String id) => "/api/orders/$id";
+
+  static const String esewaInit = "/api/payments/esewa/init";
+  static const String esewaSuccessPath = "/api/payments/esewa/success";
+  static const String esewaFailurePath = "/api/payments/esewa/failure";
 }

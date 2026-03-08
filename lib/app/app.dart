@@ -37,8 +37,7 @@ class BodhApp extends StatelessWidget {
     return MaterialApp(
       title: 'BODH',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system, // 👈 optional, if you add light/dark themes later
-      initialRoute: '/',
+      themeMode: ThemeMode.system,
       routes: {
         '/': (context) =>  SplashScreen(),
         '/onboarding': (context) => const OnboardingScreen(),

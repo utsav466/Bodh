@@ -1,11 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bodh_flutter/features/auth/presentation/state/auth_state.dart';
 import 'package:bodh_flutter/features/auth/presentation/view_model/auth_view_model.dart';
 
 class FakeAuthViewModel extends AuthViewModel {
   @override
   AuthState build() {
-    // initial state for tests
     return const AuthState();
   }
 
@@ -17,7 +15,7 @@ class FakeAuthViewModel extends AuthViewModel {
     required String password,
     String? phoneNumber,
   }) async {
-    // do nothing
+    // no-op for widget tests
   }
 
   @override
@@ -25,11 +23,32 @@ class FakeAuthViewModel extends AuthViewModel {
     required String email,
     required String password,
   }) async {
-    // do nothing
+    // no-op for widget tests
   }
 
   @override
   Future<void> updateAvatar(dynamic image) async {
-    // do nothing
+    // no-op for widget tests
+  }
+
+  @override
+  Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
+    return {
+      "success": true,
+      "message": "Reset code sent successfully",
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> resetPassword({
+    required String token,
+    required String password,
+  }) async {
+    return {
+      "success": true,
+      "message": "Password reset successful",
+    };
   }
 }

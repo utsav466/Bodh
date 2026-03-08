@@ -166,10 +166,12 @@ class _AuthInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final publicEndpoints = {
-      ApiEndpoints.login,
-      ApiEndpoints.register,
-    };
+final publicEndpoints = {
+  ApiEndpoints.login,
+  ApiEndpoints.register,
+  ApiEndpoints.forgotPassword,
+  ApiEndpoints.resetPassword,
+};
 
     if (!publicEndpoints.contains(options.path)) {
       final token = await _storage.read(key: _tokenKey);
