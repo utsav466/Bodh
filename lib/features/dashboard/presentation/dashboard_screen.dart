@@ -1,11 +1,9 @@
 import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/about.dart';
 import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/cart_screen.dart';
 import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/home.dart';
+import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/my_orders_screen.dart';
 import 'package:bodh_flutter/features/dashboard/presentation/bottom%20screen/profile.dart';
 import 'package:flutter/material.dart';
-
-
-
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -17,23 +15,18 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  List<Widget> lstBottomScreen = [
+  final List<Widget> lstBottomScreen = [
     const HomeScreen(),
     const CartScreen(),
+    const MyOrdersScreen(),
     const ProfileScreen(),
     const AboutScreen(),
-  ]; //  <-- Missing semicolon FIXED!
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   // title: const Text('This is dashboard'),
-      //   // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      // ),
-
-      body: lstBottomScreen[_selectedIndex], // <-- Shows the correct page
-
+      body: lstBottomScreen[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const [
@@ -42,7 +35,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: Icon(Icons.shopping_bag),
             label: 'Cart',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: 'Orders',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),

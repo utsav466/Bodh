@@ -1,3 +1,4 @@
+import 'package:bodh_flutter/core/api/api_endpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:bodh_flutter/features/dashboard/models/book.dart';
 import 'package:bodh_flutter/features/dashboard/presentation/read_online.dart';
@@ -8,8 +9,88 @@ class BookDetailsScreen extends StatelessWidget {
   final Book book;
   const BookDetailsScreen({super.key, required this.book});
 
+  String _resolveImage(String image) {
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return image;
+    }
+    if (image.startsWith('/')) {
+      return '${ApiEndpoints.baseUrl}$image';
+    }
+    return image;
+  }
+
+  Widget _buildBookImage() {
+    if (book.image.isEmpty) {
+      return Container(
+        width: double.infinity,
+        height: 280,
+        color: Colors.grey.shade200,
+        child: const Center(
+          child: Icon(
+            Icons.menu_book_outlined,
+            size: 50,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
+    if (book.hasNetworkImage) {
+      return Image.network(
+        _resolveImage(book.image),
+        width: double.infinity,
+        height: 280,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) {
+          return Container(
+            width: double.infinity,
+            height: 280,
+            color: Colors.grey.shade200,
+            child: const Center(
+              child: Icon(
+                Icons.broken_image_outlined,
+                size: 50,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    return Image.asset(
+      book.image,
+      width: double.infinity,
+      height: 280,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) {
+        return Container(
+          width: double.infinity,
+          height: 280,
+          color: Colors.grey.shade200,
+          child: const Center(
+            child: Icon(
+              Icons.broken_image_outlined,
+              size: 50,
+              color: Colors.grey,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authorText =
+        (book.author ?? book.subtitle).trim().isNotEmpty
+            ? (book.author ?? book.subtitle).trim()
+            : 'Unknown Author';
+
+    final descriptionText = book.subtitle.trim().isNotEmpty
+        ? book.subtitle.trim()
+        : 'No description available for this book.';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
@@ -25,7 +106,7 @@ class BookDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ⭐ Rating section
+            // Rating section
             Row(
               children: [
                 const Icon(Icons.star, color: Colors.amber, size: 24),
@@ -37,37 +118,86 @@ class BookDetailsScreen extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '(1,245 ratings)',
-                  style: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.6)),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black.withOpacity(0.6),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
 
-            // 📘 Book cover
+            // Book cover
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                book.image,
-                width: double.infinity,
-                height: 280,
-                fit: BoxFit.cover,
-              ),
+              child: _buildBookImage(),
             ),
             const SizedBox(height: 20),
 
-            // 🖋️ Title & Author
+            // Title & Author
             Text(
               book.title,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              'Francesc Miralles',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+            Text(
+              authorText,
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Category + Price
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                if ((book.category ?? '').isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      book.category!,
+                      style: TextStyle(
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                if (book.price != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'NPR ${book.price!.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 24),
 
-            // 🛒 Action buttons
+            // Action buttons
             Row(
               children: [
                 Expanded(
@@ -131,14 +261,25 @@ class BookDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 28),
 
-            // 📖 Description
+            // Description
             const Text(
-              'Ikigai (生き甲斐, lit. "a reason for being") is a Japanese concept referring to what an individual defines as the meaning of their life.',
-              style: TextStyle(fontSize: 16, height: 1.5),
+              'Description',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              descriptionText,
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 28),
 
-            // 🔍 Preview section
+            // Preview section
             const Text(
               'Preview',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),

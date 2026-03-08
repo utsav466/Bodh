@@ -1,5 +1,6 @@
 import 'package:bodh_flutter/app/routes/app_routes.dart';
 import 'package:bodh_flutter/core/utils/snack_bar_utils.dart';
+import 'package:bodh_flutter/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:bodh_flutter/features/auth/presentation/pages/signup_page.dart';
 import 'package:bodh_flutter/features/auth/presentation/state/auth_state.dart';
 import 'package:bodh_flutter/features/auth/presentation/view_model/auth_view_model.dart';
@@ -34,12 +35,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       setState(() => _isLoading = true);
 
       await ref.read(authViewModelProvider.notifier).login(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
 
-      setState(() => _isLoading = false);
-      // ❌ Removed unconditional navigation here
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -51,22 +53,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   void _handleForgotPassword() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Forgot password feature coming soon')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ForgotPasswordPage(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-    
         AppRoutes.pushReplacement(context, DashboardScreen());
-      } else if (next.status == AuthStatus.error && next.errorMessage != null) {
-        
+      } else if (next.status == AuthStatus.error &&
+          next.errorMessage != null) {
         SnackbarUtils.showError(context, next.errorMessage!);
       }
     });
@@ -77,7 +80,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           key: _formKey,
           child: Column(
             children: [
-              // Header
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(top: 200, bottom: 40),
@@ -127,7 +129,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               const SizedBox(height: 30),
 
-              // Email Field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextFormField(
@@ -136,7 +137,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   decoration: InputDecoration(
                     hintText: "Email",
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 18),
+                      vertical: 14,
+                      horizontal: 18,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(color: Color(0xFF3D8BFF)),
@@ -156,7 +159,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               const SizedBox(height: 18),
 
-              // Password Field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextFormField(
@@ -165,7 +167,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   decoration: InputDecoration(
                     hintText: "Password",
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 18),
+                      vertical: 14,
+                      horizontal: 18,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(color: Color(0xFF3D8BFF)),
@@ -195,7 +199,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
 
-             
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -212,7 +215,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               const SizedBox(height: 30),
 
-            
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: SizedBox(
@@ -232,14 +234,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : const Text(
                             "Login",
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
                           ),
                   ),
                 ),
@@ -247,7 +252,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               const SizedBox(height: 20),
 
-              // Sign Up Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

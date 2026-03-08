@@ -18,7 +18,8 @@ abstract interface class IAuthRemoteDatasource {
   Future<AuthApiModel> register(AuthApiModel user);
   Future<AuthApiModel?> login(String email, String password);
   Future<AuthApiModel?> getUserById(String authId);
-
-  // ✅ STEP 1: ONLY THIS LINE IS NEW
   Future<AuthApiModel?> updateAvatar(File image);
+
+  Future<Map<String, dynamic>?> forgotPassword(String email);
+  Future<Map<String, dynamic>?> resetPassword(String token, String password);
 }

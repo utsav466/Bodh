@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bodh_flutter/features/auth/data/repositories/auth_remote_repository.dart';
 import 'package:bodh_flutter/features/auth/domain/usecases/login_usecase.dart';
 import 'package:bodh_flutter/features/auth/domain/usecases/register_usecase.dart';
 import 'package:bodh_flutter/features/auth/domain/usecases/update_avatar_usecase.dart';
@@ -14,12 +15,14 @@ class AuthViewModel extends Notifier<AuthState> {
   late final RegisterUsecase _registerUsecase;
   late final LoginUsecase _loginUsecase;
   late final UpdateAvatarUsecase _updateAvatarUsecase;
+  late final AuthRemoteRepository _authRemoteRepository;
 
   @override
   AuthState build() {
     _registerUsecase = ref.read(registerUsecaseProvider);
     _loginUsecase = ref.read(loginUsecaseProvider);
     _updateAvatarUsecase = ref.read(updateAvatarUsecaseProvider);
+    _authRemoteRepository = ref.read(authRemoteRepositoryProvider);
     return const AuthState();
   }
 
@@ -91,41 +94,63 @@ class AuthViewModel extends Notifier<AuthState> {
     );
   }
 
-Future<void> updateAvatar(File image) async {
-  state = state.copyWith(
-    status: AuthStatus.loading,
-    errorMessage: null,
-    successMessage: null,
-  );
-
-  try {
-    final result = await _updateAvatarUsecase(image);
-
-    result.fold(
-      (failure) {
-        state = state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: failure.message, // should be human readable
-          successMessage: null,
-        );
-      },
-      (updatedAuth) {
-        state = state.copyWith(
-          status: AuthStatus.authenticated,
-          authEntity: updatedAuth,
-          successMessage: "Profile picture updated successfully",
-          errorMessage: null,
-        );
-      },
-    );
-  } catch (_) {
-    // ✅ Prevent "UnimplementedError" or raw exceptions from showing
+  Future<void> updateAvatar(File image) async {
     state = state.copyWith(
-      status: AuthStatus.error,
-      errorMessage: "Failed to update profile picture",
+      status: AuthStatus.loading,
+      errorMessage: null,
       successMessage: null,
     );
-  }
-}
 
+    try {
+      final result = await _updateAvatarUsecase(image);
+
+      result.fold(
+        (failure) {
+          state = state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: failure.message,
+            successMessage: null,
+          );
+        },
+        (updatedAuth) {
+          state = state.copyWith(
+            status: AuthStatus.authenticated,
+            authEntity: updatedAuth,
+            successMessage: "Profile picture updated successfully",
+            errorMessage: null,
+          );
+        },
+      );
+    } catch (_) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: "Failed to update profile picture",
+        successMessage: null,
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
+    try {
+      return await _authRemoteRepository.forgotPassword(email: email);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> resetPassword({
+    required String token,
+    required String password,
+  }) async {
+    try {
+      return await _authRemoteRepository.resetPassword(
+        token: token,
+        password: password,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

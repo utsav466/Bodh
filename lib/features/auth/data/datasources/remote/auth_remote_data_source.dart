@@ -34,7 +34,6 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
 
   @override
   Future<AuthApiModel?> getUserById(String authId) async {
-    // ✅ Avoid crashing UI (was throwing UnimplementedError)
     return null;
   }
 
@@ -128,6 +127,42 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
       );
 
       return updatedUser;
+    }
+
+    return null;
+  }
+
+  @override
+  Future<Map<String, dynamic>?> forgotPassword(String email) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.forgotPassword,
+      data: {
+        "email": email,
+      },
+    );
+
+    if (response.data is Map<String, dynamic>) {
+      return Map<String, dynamic>.from(response.data);
+    }
+
+    return null;
+  }
+
+  @override
+  Future<Map<String, dynamic>?> resetPassword(
+    String token,
+    String password,
+  ) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.resetPassword,
+      data: {
+        "token": token,
+        "password": password,
+      },
+    );
+
+    if (response.data is Map<String, dynamic>) {
+      return Map<String, dynamic>.from(response.data);
     }
 
     return null;

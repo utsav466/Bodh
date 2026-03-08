@@ -46,7 +46,9 @@ class AuthRepository implements IAuthRepository {
       if (model != null) {
         return Right(model.toEntity());
       }
-      return Left(LocalDatabaseFailure(message: "Failed to get current user"));
+      return Left(
+        LocalDatabaseFailure(message: "Failed to get current user"),
+      );
     } catch (e) {
       return Left(LocalDatabaseFailure(message: e.toString()));
     }
@@ -91,7 +93,7 @@ class AuthRepository implements IAuthRepository {
   Future<Either<Failure, bool>> logout() async {
     try {
       final result = await _authLocalDatasource.logout();
-      if (result) return Right(true);
+      if (result) return const Right(true);
       return Left(LocalDatabaseFailure(message: "Failed to Logout user"));
     } catch (e) {
       return Left(LocalDatabaseFailure(message: e.toString()));
@@ -104,7 +106,7 @@ class AuthRepository implements IAuthRepository {
       try {
         final userModel = AuthApiModel.fromEntity(entity);
         await _authRemoteDatasource.register(userModel);
-        return Right(true);
+        return const Right(true);
       } on DioException catch (e) {
         return Left(
           ApiFailure(
@@ -127,14 +129,13 @@ class AuthRepository implements IAuthRepository {
 
         final model = AuthHiveModel.fromEntity(entity);
         await _authLocalDatasource.register(model);
-        return Right(true);
+        return const Right(true);
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
       }
     }
   }
 
-  // ✅ ONLY NEW METHOD (avatar upload)
   @override
   Future<Either<Failure, AuthEntity>> updateAvatar(File image) async {
     if (!await _networkInfo.isConnected) {
@@ -147,7 +148,6 @@ class AuthRepository implements IAuthRepository {
       if (result != null) {
         final entity = result.toEntity();
 
-        // Update local Hive cache
         await _authLocalDatasource.updateUser(
           AuthHiveModel.fromEntity(entity),
         );
@@ -161,6 +161,72 @@ class AuthRepository implements IAuthRepository {
         ApiFailure(
           statusCode: e.response?.statusCode,
           message: e.response?.data["message"] ?? "Avatar upload failed",
+        ),
+      );
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> forgotPassword(String email) async {
+    if (!await _networkInfo.isConnected) {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+
+    try {
+      final result = await _authRemoteDatasource.forgotPassword(email);
+
+      if (result != null && result["success"] == true) {
+        return const Right(true);
+      }
+
+      return Left(
+        ApiFailure(
+          message: result?["message"]?.toString() ?? "Forgot password failed",
+        ),
+      );
+    } on DioException catch (e) {
+      return Left(
+        ApiFailure(
+          statusCode: e.response?.statusCode,
+          message: e.response?.data["message"] ?? "Forgot password failed",
+        ),
+      );
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> resetPassword(
+    String token,
+    String password,
+  ) async {
+    if (!await _networkInfo.isConnected) {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+
+    try {
+      final result = await _authRemoteDatasource.resetPassword(
+        token,
+        password,
+      );
+
+      if (result != null && result["success"] == true) {
+        return const Right(true);
+      }
+
+      return Left(
+        ApiFailure(
+          message: result?["message"]?.toString() ?? "Reset password failed",
+        ),
+      );
+    } on DioException catch (e) {
+      return Left(
+        ApiFailure(
+          statusCode: e.response?.statusCode,
+          message: e.response?.data["message"] ?? "Reset password failed",
         ),
       );
     } catch (e) {
